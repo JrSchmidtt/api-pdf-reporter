@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"pdf-reporter/htmlParser"
+	"pdf-reporter/pdfGenerator"
 )
 
 type Data struct {
@@ -10,15 +12,25 @@ type Data struct {
 }
 
 func main(){
-	h := htmlParser.New("tmp")
-
-	dataHTML := Data{
-		Name : "Junior Schmidt",
+	dataHtml := Data{
+		Name : "Lorem Ipsum",
 	}
-	htmlGenerated, err := h.Create("templates/example.html", dataHTML)
+
+	h := htmlParser.New("tmp")
+	p := pdfGenerator.NewWkHtmlToPdf("tmp")
+
+	fileHtml, err := h.Create("templates/example.html", dataHtml)
+	defer os.Remove(fileHtml)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	fmt.Println(htmlGenerated)
+	fmt.Println("File Html: ",fileHtml)
+
+	filePDFName, err := p.Create(fileHtml)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println("File Pdf: ",filePDFName)
 }
