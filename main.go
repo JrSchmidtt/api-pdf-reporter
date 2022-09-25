@@ -1,8 +1,8 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -26,7 +26,7 @@ func main(){
 }
 
 func getPDF(w http.ResponseWriter, r *http.Request){
-	w.Header().Set("Content=Type", "application/json")
+	w.Header().Add("content-type", "application/pdf")
 
 	dataHtml := Data{
 		Name : "Lorem Ipsum",
@@ -49,9 +49,18 @@ func getPDF(w http.ResponseWriter, r *http.Request){
 		return
 	}
 	fmt.Println("File Pdf: ",filePDFName)
+
+	fileD, err := os.Open(filePDFName)
+    if err != nil {
+        log.Panic(err)
+    }
 	
-	json.NewEncoder(w).Encode([]Response{{
-		Id: 1,
-		FileName: filePDFName,
-	}})
+    file_bytes, err := ioutil.ReadAll(fileD)
+    if err != nil {
+        log.Panic(err)
+    }
+	w.WriteHeader(http.StatusOK)
+	w.Write(file_bytes)
+    defer fileD.Close()
+	defer os.Remove(filePDFName)
 }
