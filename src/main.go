@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -8,6 +9,11 @@ import (
 	"os"
 	"pdf-reporter/htmlParser"
 	"pdf-reporter/pdfGenerator"
+
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3"
 )
 
 type Data struct {
@@ -17,6 +23,23 @@ type Data struct {
 type Response struct {
 	Id int
 	FileName string
+}
+
+var (
+	client *s3.S3
+)
+
+func init(){
+	sess, err := session.NewSession(&aws.Config{
+		Credentials: credentials.NewStaticCredentials(
+			os.Getenv("AWS_ACCESS_KEY"),
+			os.Getenv("AWS_SECRET_KEY"),""),
+		Region: aws.String("us-east-1"),
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+	client = s3.New(sess)
 }
 
 func main(){
@@ -32,8 +55,8 @@ func getPDF(w http.ResponseWriter, r *http.Request){
 		Name : "Lorem Ipsum",
 	}
 
-	h := htmlParser.New("tmp")
-	p := pdfGenerator.NewWkHtmlToPdf("tmp")
+	h := htmlParser.New("./")
+	p := pdfGenerator.NewWkHtmlToPdf("./")
 
 	fileHtml, err := h.Create("templates/example.html", dataHtml)
 	defer os.Remove(fileHtml)
@@ -59,6 +82,18 @@ func getPDF(w http.ResponseWriter, r *http.Request){
     if err != nil {
         log.Panic(err)
     }
+
+	fmt.Println("Upload start!")
+	_, err = client.PutObject(&s3.PutObjectInput{
+		Bucket: aws.String("orma-public-dev"),
+		Key: aws.String(filePDFName),
+		Body: bytes.NewReader(file_bytes),
+	})
+	if err != nil{
+		fmt.Printf("Upload error: %v",err)
+	}
+	fmt.Println("Upload end!")
+
 	w.WriteHeader(http.StatusOK)
 	w.Write(file_bytes)
     defer fileD.Close()
