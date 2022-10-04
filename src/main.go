@@ -85,7 +85,7 @@ func getPDF(w http.ResponseWriter, r *http.Request){
 
 	fmt.Println("Upload start!")
 	_, err = client.PutObject(&s3.PutObjectInput{
-		Bucket: aws.String("orma-public-dev"),
+		Bucket: aws.String("CHANGE-BUCKET-NAME-HERE"),
 		Key: aws.String(filePDFName),
 		Body: bytes.NewReader(file_bytes),
 	})
