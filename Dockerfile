@@ -39,7 +39,7 @@ FROM minidocks/wkhtmltopdf
 
 WORKDIR /app
 
-COPY fonts/ /usr/share/fonts
+COPY templates/fonts/ /usr/share/fonts
 COPY templates/ ./templates/
 RUN mkdir tmp
 COPY --from=appbuild /server ./server
