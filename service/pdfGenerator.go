@@ -1,8 +1,10 @@
-package pdfGenerator
+package service
 
 import (
 	"os"
 
+
+	"github.com/JrSchmidtt/api-gin/models"
 	"github.com/SebastiaanKlippert/go-wkhtmltopdf"
 	"github.com/google/uuid"
 )
@@ -11,11 +13,11 @@ type wk struct {
 	rootPath string
 }
 
-func NewWkHtmlToPdf(rootPath string) PDFGeneratorInterface {
+func NewWkHtmlToPdf(rootPath string) models.PDFGeneratorInterface {
 	return &wk{rootPath: rootPath}
 }
 
-func (w *wk) Create(htmlFile string) (string, error) {
+func (w *wk) CreatePDF(htmlFile string) (string, error) {
 	fileName := w.rootPath + "/" + uuid.New().String() + ".pdf"
 
 	f, err := os.Open(htmlFile)

@@ -31,7 +31,7 @@ RUN apk add --no-cache \
 FROM golang:1.19 as appbuild
 
 WORKDIR /app
-COPY src/ ./
+COPY . ./
 RUN go build -o /server
 
 # Image

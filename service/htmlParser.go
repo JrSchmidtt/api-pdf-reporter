@@ -1,8 +1,10 @@
-package htmlParser
+package service
 
 import (
 	"os"
 	"text/template"
+
+	"github.com/JrSchmidtt/api-gin/models"
 	"github.com/google/uuid"
 )
 
@@ -10,11 +12,11 @@ type htmlStruct struct {
 	rootPath string
 }
 
-func New(rootPath string) HTMLParserInterface {
+func NewHtml(rootPath string) models.HTMLParserInterface {
 	return &htmlStruct{rootPath: rootPath}
 }
 
-func (a *htmlStruct) Create(templateName string, data interface{}) (string, error) {
+func (a *htmlStruct) CreateHtml(templateName string, data interface{}) (string, error) {
 	templateGenerator, err := template.ParseFiles(templateName)
 	if err != nil {
 		return "", err
