@@ -5,6 +5,7 @@ import (
 
 	"github.com/JrSchmidtt/api-gin/routes"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 type Server struct {
@@ -13,6 +14,11 @@ type Server struct {
 }
 
 func NewServer() Server{
+	err := godotenv.Load(".env")
+    if err != nil {
+        log.Fatal("Error loading .env file")
+    }
+
 	return Server{
 		port: "3000",
 		server: gin.Default(),

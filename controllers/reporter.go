@@ -46,10 +46,12 @@ func CreatePDF(c *gin.Context) {
 		return
 	}
 	fmt.Println("File Pdf: ", filePDFName)
-	//defer os.Remove(fileHtml)
+
+	service.UploadFileToS3(filePDFName)
 
 	c.JSON(200, gin.H{
 		"File Html": fileHtml,
 		"File Pdf":  filePDFName,
 	})
+	os.Remove(fileHtml)
 }

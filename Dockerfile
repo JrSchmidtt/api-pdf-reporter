@@ -42,9 +42,9 @@ WORKDIR /app
 COPY templates/fonts/ /usr/share/fonts
 COPY templates/ ./templates/
 RUN mkdir tmp
-COPY --from=appbuild /server ./server
+COPY --from=appbuild /server ./api
 COPY --from=wkhtmltopdf /bin/wkhtmltopdf /bin/wkhtmltopdf
 
 EXPOSE 3000
 
-ENTRYPOINT [ "./server" ]
+ENTRYPOINT [ "./api" ]
